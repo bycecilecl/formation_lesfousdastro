@@ -113,18 +113,13 @@
             </svg>
         );
 
-        const LoginPage = React.memo(({ onLogin, onSignup, loginError }) => {
+        const LoginPage = React.memo(({ onLogin, loginError }) => {
             const [localEmail, setLocalEmail] = useState('');
             const [localPassword, setLocalPassword] = useState('');
-            const [isLogin, setIsLogin] = useState(true);
 
             const handleSubmit = (e) => {
                 e.preventDefault();
-                if (isLogin) {
-                    onLogin(localEmail, localPassword);
-                } else {
-                    onSignup(localEmail, localPassword);
-                }
+                onLogin(localEmail, localPassword);
             };
 
             return (
@@ -176,20 +171,9 @@
                                 className="w-full py-3 rounded-lg text-white font-semibold shadow-lg hover:shadow-xl transition-all"
                                 style={{ backgroundColor: '#1f628e' }}
                             >
-                                {isLogin ? 'Se connecter' : 'Créer un compte'}
+                                Se connecter
                             </button>
                         </form>
-
-                        <div className="mt-6 text-center">
-                            <button
-                                type="button"
-                                onClick={() => setIsLogin(!isLogin)}
-                                className="text-sm hover:underline"
-                                style={{ color: '#00a8a8' }}
-                            >
-                                {isLogin ? "Pas encore de compte ? Créer un compte" : "Déjà un compte ? Se connecter"}
-                            </button>
-                        </div>
 
                         <div className="mt-8 p-4 rounded-lg text-sm" style={{ backgroundColor: '#c0f0f7' }}>
                             <p className="font-semibold mb-2" style={{ color: '#1f628e' }}>📧 Note importante :</p>
@@ -225,21 +209,6 @@
                     await auth.signInWithEmailAndPassword(email, password);
                 } catch (error) {
                     setLoginError('Email ou mot de passe incorrect');
-                }
-            };
-
-            const handleSignup = async (email, password) => {
-                setLoginError('');
-                try {
-                    await auth.createUserWithEmailAndPassword(email, password);
-                } catch (error) {
-                    if (error.code === 'auth/email-already-in-use') {
-                        setLoginError('Cet email est déjà utilisé');
-                    } else if (error.code === 'auth/weak-password') {
-                        setLoginError('Le mot de passe doit contenir au moins 6 caractères');
-                    } else {
-                        setLoginError('Erreur lors de la création du compte');
-                    }
                 }
             };
 
@@ -571,7 +540,7 @@
             }
 
             if (!user && currentPage === 'login') {
-                return <LoginPage onLogin={handleLogin} onSignup={handleSignup} loginError={loginError} />;
+                return <LoginPage onLogin={handleLogin} loginError={loginError} />;
             }
 
             const HomePage = () => (
